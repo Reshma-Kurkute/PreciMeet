@@ -1,0 +1,133 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-28 16:41:46.574133",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_tb1z",
+  "column_break_pfqn",
+  "amended_from",
+  "subject",
+  "room",
+  "booked_by",
+  "attendees_emails",
+  "invitees_emails",
+  "column_break_xydj",
+  "date",
+  "from_time",
+  "to_time",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_tb1z",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Room Reservation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Subject",
+   "reqd": 1
+  },
+  {
+   "fieldname": "room",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Room",
+   "options": "Room",
+   "reqd": 1
+  },
+  {
+   "fieldname": "attendees_emails",
+   "fieldtype": "Table MultiSelect",
+   "label": "Attendees Emails",
+   "options": "PreciAttendees",
+   "reqd": 1
+  },
+  {
+   "fieldname": "invitees_emails",
+   "fieldtype": "Small Text",
+   "label": "Invitees Emails"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Time",
+   "label": "From Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_time",
+   "fieldtype": "Time",
+   "label": "To Time"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_pfqn",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "fieldname": "booked_by",
+   "fieldtype": "Link",
+   "label": "Booked By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_xydj",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-04-28 17:17:23.409926",
+ "modified_by": "Administrator",
+ "module": "PreciMeet",
+ "name": "Room Reservation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "subject"
+}

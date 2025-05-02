@@ -1,0 +1,35 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-28 16:48:57.155036",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "email_ids"
+ ],
+ "fields": [
+  {
+   "fieldname": "email_ids",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Email Ids",
+   "options": "User",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-28 16:57:01.935597",
+ "modified_by": "Administrator",
+ "module": "PreciMeet",
+ "name": "PreciAttendees",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
