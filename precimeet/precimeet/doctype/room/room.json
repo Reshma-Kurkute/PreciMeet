@@ -1,32 +1,32 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{room} - {floor}",
+ "autoname": "format:{room}-{floor}",
  "creation": "2025-04-28 16:27:25.316924",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "room",
   "floor",
+  "no_of_seat",
   "column_break_qkkj",
   "projector",
-  "white_board"
+  "white_board",
+  "room_image"
  ],
  "fields": [
   {
    "fieldname": "room",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Room",
-   "reqd": 1
+   "label": "Room Name"
   },
   {
    "fieldname": "floor",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Floor",
-   "options": "\n1st Floor\n2nd Floor\n3rd Floor",
-   "reqd": 1
+   "options": "\n1st Floor\n2nd Floor\n3rd Floor"
   },
   {
    "fieldname": "column_break_qkkj",
@@ -43,12 +43,23 @@
    "fieldname": "white_board",
    "fieldtype": "Check",
    "label": "White Board"
+  },
+  {
+   "fieldname": "no_of_seat",
+   "fieldtype": "Int",
+   "label": "No of Seat",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "room_image",
+   "fieldtype": "Attach Image",
+   "label": "Room Image"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-28 16:33:26.655674",
+ "modified": "2025-05-13 12:01:34.423903",
  "modified_by": "Administrator",
  "module": "PreciMeet",
  "name": "Room",
@@ -72,5 +83,7 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "room"
+ "title_field": "room",
+ "track_changes": 1,
+ "track_seen": 1
 }

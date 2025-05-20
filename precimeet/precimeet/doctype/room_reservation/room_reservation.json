@@ -38,23 +38,20 @@
    "fieldname": "subject",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Subject",
-   "reqd": 1
+   "label": "Subject"
   },
   {
    "fieldname": "room",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Room",
-   "options": "Room",
-   "reqd": 1
+   "options": "Room"
   },
   {
    "fieldname": "attendees_emails",
    "fieldtype": "Table MultiSelect",
    "label": "Attendees Emails",
-   "options": "PreciAttendees",
-   "reqd": 1
+   "options": "PreciAttendees"
   },
   {
    "fieldname": "invitees_emails",
@@ -64,14 +61,12 @@
   {
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Date",
-   "reqd": 1
+   "label": "Date"
   },
   {
    "fieldname": "from_time",
    "fieldtype": "Time",
-   "label": "From Time",
-   "reqd": 1
+   "label": "From Time"
   },
   {
    "fieldname": "to_time",
@@ -81,8 +76,7 @@
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Description",
-   "reqd": 1
+   "label": "Description"
   },
   {
    "fieldname": "column_break_pfqn",
@@ -105,7 +99,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-04-28 17:17:23.409926",
+ "modified": "2025-05-20 10:04:16.576164",
  "modified_by": "Administrator",
  "module": "PreciMeet",
  "name": "Room Reservation",

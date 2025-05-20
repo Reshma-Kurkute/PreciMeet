@@ -4,6 +4,7 @@ app_publisher = "preciholesports"
 app_description = "Meeting room booking app for precihole"
 app_email = "reshma.k@preciholesports.com"
 app_license = "mit"
+app_version = "2.0.0"
 
 # Apps
 # ------------------
@@ -242,3 +243,5 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+
+website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'},]
