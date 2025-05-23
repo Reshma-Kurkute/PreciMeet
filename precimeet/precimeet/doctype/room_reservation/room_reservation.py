@@ -75,6 +75,100 @@ class RoomReservation(Document):
             # frappe.print("Booking by: ", self.booked_by)
             self.submit()
 
+    def before_cancel(self):
+        # Send cancellation email to attendees
+        self.send_cancellation_email()
+
+    # email on update
+    def on_update_after_submit(self):
+            frappe.logger().info(f"on_update_after_submit triggered for {self.name}")
+            self.send_reschedule_email()
+            
+
+    def send_reschedule_email(self):
+        try:
+            attendee_emails = []
+
+            # Only collect attendee emails if attendees are added
+            for attendee in self.attendees_emails:
+                if attendee.email_ids:               
+                    email = frappe.db.get_value("User", attendee.email_ids, "email")
+                    if email:
+                        attendee_emails.append(email)
+
+            # Collect invitee emails from invitees field
+            invitee_emails = []
+            if self.invitees_emails:
+                invitee_emails = [email.strip() for email in self.invitees_emails.split(',') if email.strip()]
+            all_recipients = attendee_emails + invitee_emails
+
+            subject = f"Meeting is reshedule: {self.subject}"
+            message = f"""
+            <p>Hello,</p>
+            <p>You meeting has been reschedule as follows.</p>
+            <p><strong>Subject:</strong> {self.subject}</p>
+            <p><strong>Room:</strong> {self.room}</p>
+            <p><strong>Date:</strong> {self.date}</p>
+            <p><strong>From Time:</strong> {self.from_time} <strong>To:</strong> {self.to_time}</p>
+            <p><strong>Booked By:</strong> {frappe.session.user}</p>
+            <p><strong>Description:</strong> {self.description}</p>
+            """
+
+            if all_recipients:
+                frappe.sendmail(
+                    recipients=list(set(all_recipients)), 
+                    subject=subject,
+                    message=message
+                )
+                frappe.msgprint("Meeting reschedule email sent successfully!")
+            else:
+                frappe.msgprint("No recipients found to send email.")
+
+        except Exception as e:
+            frappe.log_error(frappe.get_traceback(), "Room Booking: Email Sending Error")
+            frappe.msgprint(f"Failed to send email notification: {str(e)}")
+
+
+    
+    def send_cancellation_email(self):  
+        try:
+            attendee_emails = []
+
+            # Only collect attendee emails if attendees are added
+            for attendee in self.attendees_emails:
+                if attendee.email_ids:               
+                    email = frappe.db.get_value("User", attendee.email_ids, "email")
+                    if email:
+                        attendee_emails.append(email)
+
+            # Collect invitee emails from invitees field
+            invitee_emails = []
+            if self.invitees_emails:
+                invitee_emails = [email.strip() for email in self.invitees_emails.split(',') if email.strip()]
+
+            all_recipients = attendee_emails + invitee_emails
+
+            subject = f"Meeting Cancelled: {self.subject}"
+            message = f"""
+            <p>Dear Sir/Madam,</p>
+            <p>The meeting scheduled on {self.date} regarding {self.description} has been cancelled.</p>
+            <p>For any update we will inform you soon.</p>
+            """
+
+            if all_recipients:
+                frappe.sendmail(
+                    recipients=list(set(all_recipients)), 
+                    subject=subject,
+                    message=message
+                )
+                frappe.msgprint("Cancellation email sent successfully!")
+            else:
+                frappe.msgprint("No recipients found to send cancellation email.")
+
+        except Exception as e:
+            frappe.log_error(frappe.get_traceback(), "Room Booking: Email Sending Error")
+            frappe.msgprint(f"Failed to send cancellation email notification: {str(e)}")
+
 
     def before_submit(self):
         self.send_attendees_email()
@@ -94,7 +188,6 @@ class RoomReservation(Document):
             invitee_emails = []
             if self.invitees_emails:
                 invitee_emails = [email.strip() for email in self.invitees_emails.split(',') if email.strip()]
-
             all_recipients = attendee_emails + invitee_emails
 
             subject = f"Meeting Scheduled: {self.subject}"

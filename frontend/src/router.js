@@ -10,6 +10,11 @@ const routes = [
     component: RoomDetail,
   },
   {
+    name:'Room',
+    path: '/room',
+    component:() => import('@/pages/Room.vue'),
+  },
+  {
     path:'/bookRoom',
     name: 'BookRoom',
     component: RoomDetail,
@@ -23,12 +28,7 @@ const routes = [
     name: 'Login',
     path: '/account/login',
     component: () => import('@/pages/Login.vue'),
-  },
-  {
-    name: 'AllBooking',
-    path: '/AllBooking',
-    component: () => import('@/pages/AllBooking.vue'),
-  },
+  }
 ]
 
 let router = createRouter({

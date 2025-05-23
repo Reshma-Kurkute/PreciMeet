@@ -245,3 +245,8 @@ app_version = "2.0.0"
 
 
 website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'},]
+doc_events = {
+    "Room Reservation": {
+        "on_update": "precimeet.precimeet.doctype.room_reservation.room_reservation.on_update"
+    }
+}

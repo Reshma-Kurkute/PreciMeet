@@ -15,14 +15,13 @@
         <a href="#" class="block hover:bg-gray-200 p-2 rounded">My View</a>
       </nav>
     </aside> 
-
     <!-- Main Content -->
     <main class="flex-1 p-6">
       <h1 class="text-2xl font-semibold text-gray-700 mb-6">Available Rooms</h1>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="r in rooms" :key="r.room" class="bg-white shadow-md border rounded-lg p-4 flex flex-col justify-between">
-          <router-link :to="{ name: 'BookRoom', params: { roomName: r.name } }">
+          <router-link :to="{ name: 'Home', params: { roomName: r.name } }">
             <img :src="getImageUrl(r.room_image)" alt="Room Image" class="w-full h-40 object-cover rounded mb-4"/>
 
             <div class="text-sm space-y-1 text-gray-700">
