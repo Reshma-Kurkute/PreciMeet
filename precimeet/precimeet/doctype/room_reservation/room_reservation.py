@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import get_url
-from datetime import datetime, timedelta
+from datetime import datetime, time
 
 
 class RoomReservation(Document):
@@ -36,28 +36,7 @@ class RoomReservation(Document):
     #     # Step 4: Ensure 'from_time' is before 'to_time'
     #     if start_datetime >= end_datetime:
     #         frappe.throw("Start time must be before end time.")
-
-    #     # Step 5: Check for overlapping reservations in the same room
-    #     overlapping = frappe.db.sql("""
-    #         SELECT name FROM `tabRoom Reservation`
-    #         WHERE room = %s AND date = %s AND name != %s
-    #         AND (
-    #             (%s BETWEEN from_time AND to_time)
-    #             OR (%s BETWEEN from_time AND to_time)
-    #             OR (from_time BETWEEN %s AND %s)
-    #             OR (to_time BETWEEN %s AND %s)
-    #             )
-    #         """, (
-    #         self.room, booking_date, self.name or "New Room Reservation",
-    #         from_time, to_time,
-    #         from_time, to_time,
-    #         from_time, to_time
-    #         ))
-
-    #     if overlapping:
-    #         frappe.throw("This room is already booked during the selected time.")
-
-    #     # Step 6: Optionally, log for debugging (you can remove this in production)
+     #     # Step 6: Optionally, log for debugging (you can remove this in production)
     #     frappe.logger().info(f"Room validated: {self.room} from {start_datetime} to {end_datetime}")
     # @frappe.whitelist()
     # def get_my_bookings():
@@ -69,6 +48,63 @@ class RoomReservation(Document):
     #     fields=['subject', 'room', 'date', 'from_time', 'to_time', 'description'],
     #     order_by='date asc',
     # )
+
+    #     # Step 5: Check for overlapping reservations in the same room
+    import frappe
+    from datetime import datetime
+    from frappe import _
+
+    from datetime import datetime, time
+
+def validate(self):
+    def parse_time(t):
+        if isinstance(t, time):
+            return t
+        try:
+            return datetime.strptime(t, "%H:%M:%S").time()
+        except ValueError:
+            try:
+                return datetime.strptime(t, "%H:%M").time()
+            except ValueError:
+                frappe.throw(_("Invalid time format: {0}").format(t))
+
+    if isinstance(self.date, str):
+        self.date = datetime.strptime(self.date, "%Y-%m-%d").date()
+
+    self.from_time = parse_time(self.from_time)
+    self.to_time = parse_time(self.to_time)
+
+    if self.from_time >= self.to_time:
+        frappe.throw(_("From Time must be before To Time."))
+
+    from_datetime = datetime.combine(self.date, self.from_time)
+    to_datetime = datetime.combine(self.date, self.to_time)
+
+    overlapping = frappe.db.sql("""
+        SELECT name FROM `tabRoom Reservation`
+        WHERE
+            room = %s AND
+            date = %s AND
+            name != %s AND (
+                (%s BETWEEN TIMESTAMP(date, from_time) AND TIMESTAMP(date, to_time)) OR
+                (%s BETWEEN TIMESTAMP(date, from_time) AND TIMESTAMP(date, to_time)) OR
+                (TIMESTAMP(date, from_time) BETWEEN %s AND %s) OR
+                (TIMESTAMP(date, to_time) BETWEEN %s AND %s)
+            )
+    """, (
+        self.room,
+        self.date,
+        self.name,
+        from_datetime, to_datetime,
+        from_datetime, to_datetime,
+        from_datetime, to_datetime
+    ))
+
+    if overlapping:
+        frappe.throw(_("This room is already booked for the selected time slot."))
+
+
+   
     def after_insert(self):
         if self.docstatus == 0:
             self.booked_by = frappe.session.user
@@ -90,11 +126,13 @@ class RoomReservation(Document):
             attendee_emails = []
 
             # Only collect attendee emails if attendees are added
-            for attendee in self.attendees_emails:
-                if attendee.email_ids:               
+            for attendee_name in self.attendees_emails:
+                attendee = frappe.get_doc("PreciAttendees", attendee_name)
+                if attendee.email_ids:
                     email = frappe.db.get_value("User", attendee.email_ids, "email")
                     if email:
                         attendee_emails.append(email)
+
 
             # Collect invitee emails from invitees field
             invitee_emails = []
@@ -135,8 +173,9 @@ class RoomReservation(Document):
             attendee_emails = []
 
             # Only collect attendee emails if attendees are added
-            for attendee in self.attendees_emails:
-                if attendee.email_ids:               
+            for attendee_name in self.attendees_emails:
+                attendee = frappe.get_doc("PreciAttendees", attendee_name)
+                if attendee.email_ids:
                     email = frappe.db.get_value("User", attendee.email_ids, "email")
                     if email:
                         attendee_emails.append(email)
@@ -178,8 +217,9 @@ class RoomReservation(Document):
             attendee_emails = []
 
             # Only collect attendee emails if attendees are added
-            for attendee in self.attendees_emails:
-                if attendee.email_ids:               
+            for attendee_name in self.attendees_emails:
+                attendee = frappe.get_doc("PreciAttendees", attendee_name)
+                if attendee.email_ids:
                     email = frappe.db.get_value("User", attendee.email_ids, "email")
                     if email:
                         attendee_emails.append(email)

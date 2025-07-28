@@ -28,7 +28,12 @@ const routes = [
     name: 'Login',
     path: '/account/login',
     component: () => import('@/pages/Login.vue'),
-  }
+  },
+  {
+  path: '/book-room/:roomName?', // For pass roomname via Room.vue on click of Reserve button
+  name: 'home',
+  component: () => import('@/pages/Home.vue'),
+}
 ]
 
 let router = createRouter({

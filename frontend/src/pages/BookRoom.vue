@@ -120,6 +120,9 @@
 <script setup>
 import { ref, onMounted, computed, watch, defineProps, defineEmits } from 'vue'
 import { api } from '@/api'
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 
 const emit = defineEmits(['bookingUpdated'])   //emits an event back to the parent when a booking is created/updated.
@@ -258,20 +261,32 @@ watch(() => props.editBooking, (newVal) => {
 
 
 const submitForm = async () => {
+console.log('Submitting form with:', {
+    subject: subject.value,
+    room: selectedRoom.value,
+    attendees_emails: attendeesEmails.value.map(email => ({ email_ids: email })),
+    invitees_emails: invitees_emails.value,
+    description: description.value,
+    date: date.value,
+    from_time: from_time.value,
+    to_time: to_time.value
+  })
    if (!validateTimes()) {
     alert(timeError.value)
     return
   }
   const payload = {    
-    subject: subject.value,
-    room: selectedRoom.value,
-    attendees_emails: attendeesEmails.value.map(email => ({ email_ids: email })),
-    invitees_emails: invitees_emails.value.split(/[\n,]+/).map(e => e.trim()).filter(Boolean).join(','),
-    description: description.value,
-    date: date.value,
-    from_time: from_time.value,
-    to_time: to_time.value
-  }
+  subject: subject.value,
+  room: selectedRoom.value,
+  attendees_emails: attendeesEmails.value.map(email => ({ email_ids: email })),
+  // Convert invitees_emails to a comma-separated string    
+  invitees_emails: invitees_emails.value.split(/[\n,]+/).map(e => e.trim()).filter(Boolean).join(','),
+  description: description.value,
+  date: date.value,
+  from_time: from_time.value,
+  to_time: to_time.value
+}
+
 
   try {
     if (name.value) {
@@ -285,8 +300,9 @@ const submitForm = async () => {
     emit('bookingUpdated')
     resetForm()
   } catch (error) {
-    console.error('Booking failed:', error)
-    alert('Booking failed. Check console for details.')
+    // console.error('Booking failed:', error)
+    const message=error.response?.data?.message || 'Booking Failed'
+    alert(`Slot not Available:${message}`)
   }
 }
 
@@ -303,11 +319,20 @@ const resetForm = () => {
   name.value = null
 }
 
-// On mount
+// On mount before update the room resevation routing from 
+// onMounted(() => {
+//   fetchRooms()
+//   fetchAttendees()
+// })
+
+// Auto-select room if passed via route of Room.vue on click of Reserve button.
 onMounted(() => {
-  fetchRooms()
-  fetchAttendees()
-})
+  if (route.params.roomName) {
+    selectedRoom.value = route.params.roomName;
+  }
+  fetchRooms();
+  fetchAttendees();
+});
 
 //Ensures from_time is earlier than to_time.
 const timeError = ref('')

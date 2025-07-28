@@ -2,7 +2,8 @@
   <div id="app" class="bg-[#b1ddf1] min-h-screen text-black px-6 py-10">
     <!-- Header -->
     <!-- Fixed, black header -->
-<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-gray-900 shadow-md">
+<!-- Here contain the code of Header.vue -->
+ <header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-gray-900 shadow-md">
   <!-- Logo and title -->
   <div class="flex items-center gap-3 text-white">
   <router-link to="/" class="flex items-center gap-3">
@@ -35,7 +36,6 @@
   
   </nav>
 </header>
-
     <!-- Main Section (Swapped) -->
     <!-- Main Section (Swapped, aligned horizontally) -->
 <section class="flex flex-col md:flex-row gap-10 items-start pt-[72px]">
@@ -126,6 +126,7 @@ import BookRoom from './BookRoom.vue'
 import { api,frappe } from '@/api'
 import UserAvatar from './UserAvatar.vue'
 
+
 const bookings = ref([])
 
 const fetchBookings = async () => {
@@ -178,7 +179,7 @@ const parseBookingDateTime = (dateStr, timeStr) => {
 
 
 
-// ✅ Computed: Only future meetings
+//Computed: Only future meetings
 const upcomingMeetings = computed(() => {
   const now = new Date()
 
