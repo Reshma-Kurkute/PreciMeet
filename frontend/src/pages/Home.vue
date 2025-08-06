@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="bg-[#b1ddf1] min-h-screen text-black px-6 py-10">
+  <div id="app" class="bg-[#F1F0E4] min-h-screen text-black px-6 py-10">
     <!-- Header -->
     <!-- Fixed, black header -->
 <!-- Here contain the code of Header.vue -->
@@ -24,15 +24,22 @@
       Meeting Rooms
       </router-link>
     </button>
- 
-    <!-- <button class="px-4 py-1 border border-yellow-600 text-green-300 rounded hover:bg-blue-900 hover:text-black transition">
-      Book Now
-    </button> -->
-    <div class="flex items-center space-x-2">
-    <UserAvatar :full-name="loggedInUser" :image-url="userImageUrl" />
-    <!-- <span>{{ loggedInUser }}</span> -->
-  </div>
-  <!-- Logout Dropdown -->
+    <!-- FIX: Wrap avatar and dropdown inside `.dropdown` -->
+        <div class="relative dropdown">
+          <!-- Trigger -->
+          <div class="flex items-center space-x-2 cursor-pointer" @click="toggleDropdown">
+            <UserAvatar :full-name="loggedInUser" :image-url="userImageUrl" />
+          </div>
+
+          <!-- Dropdown -->
+          <div v-if="showDropdown" class="absolute right-0 mt-2 w-48 bg-black shadow-lg rounded-md z-10">
+            <button class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100" @click="handleLogout">
+              Logout
+            </button>
+          </div>
+        </div>
+
+  
   
   </nav>
 </header>
@@ -47,7 +54,7 @@
     @click="showOnlyMine = !showOnlyMine"
     class="px-4 py-1 text-lg border border-black bg-black text-white rounded hover:bg-blue-900 transition"
   >
-    {{ showOnlyMine ? 'Show All' : 'My Bookings' }}
+    {{ showOnlyMine ? 'Show All' : 'My Meetings' }}
   </button>
 </div>
     <div class="overflow-y-auto flex-1 custom-scrollbar">
@@ -90,9 +97,9 @@
               </div>
             </div>
             <div class="flex items-center justify-between mt-2">
-              <div class="text-lg text-black font-semibold">
+              <!-- <div class="text-lg text-black font-semibold">
                 Organizer: {{ booking.booked_by || 'N/A' }}
-              </div>
+              </div> -->
               <div class="flex -space-x-2">
                 <img
                   v-for="(person, index) in booking.participants || []"
@@ -114,7 +121,11 @@
   <!-- Right: Book Room Form -->
   <div class="bg-white rounded-2xl shadow-xl p-8 w-full md:w-1/2 min-h-[720px] ">
     <h2 class="text-2xl font-semibold mb-6">Book a Meeting</h2>
-    <BookRoom :editBooking="selectedBooking" @bookingUpdated="fetchBookings" />
+    <BookRoom 
+  :editBooking="selectedBooking"
+  :loggedInUser="loggedInUser"
+  @bookingUpdated="fetchBookings"
+/>
   </div>
 </section>
 </div>
@@ -125,7 +136,8 @@ import { ref, onMounted,computed } from 'vue'
 import BookRoom from './BookRoom.vue'
 import { api,frappe } from '@/api'
 import UserAvatar from './UserAvatar.vue'
-
+import { useRoute,useRouter } from 'vue-router'
+import { session } from '../data/session'
 
 const bookings = ref([])
 
@@ -245,6 +257,44 @@ onMounted(() => {
   getUser()
   fetchBookings()
 })
+//ofr edit form from BookRoom.vue
+const route = useRoute()
+
+// onMounted(() => {
+//   getUser()
+//   fetchBookings()
+
+//   // Check if there's an editBooking query in URL
+//   if (route.query.editBooking) {
+//     try {
+//       selectedBooking.value = JSON.parse(decodeURIComponent(route.query.editBooking))
+//     } catch (err) {
+//       console.error('Failed to decode editBooking query:', err)
+//     }
+//   }
+// })
+
+onMounted(async () => {
+  await getUser()
+  await fetchBookings()
+
+  if (route.query.editBooking) {
+    try {
+      selectedBooking.value = JSON.parse(decodeURIComponent(route.query.editBooking))
+
+      // Clear the query after loading the booking
+      const { query, ...rest } = route
+      const newQuery = { ...query }
+      delete newQuery.editBooking
+
+      router.replace({ ...rest, query: newQuery }).catch(() => {})
+    } catch (err) {
+      console.error('Failed to decode editBooking query:', err)
+    }
+  }
+})
+const router = useRouter()
+
 
 //for profile picture
 
@@ -261,7 +311,52 @@ const getUser = async () => {
     console.error('Failed to get logged in user:', err)
   }
 }
+//------------------For logout-------------------------
 
+// function getCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(';').shift();
+//   return null;
+// }
+const handleLogout = async () => {
+  await session.logout.submit()
+}
+// const logoutUser = async () => {
+//   try {
+//     const csrfToken = getCookie('csrf_token');
+
+//     if (!csrfToken) {
+//       console.error('Missing CSRF token from cookies');
+//       return;
+//     }
+
+//     const response = await frappe.post('/logout', {
+//       method: 'POST',
+//       headers: {
+//          'Content-Type': 'application/json',
+//         'X-Frappe-CSRF-Token': csrfToken
+//       },
+//       credentials: 'include',
+//     });
+
+//     if (response.ok) {
+//       // Redirect to login page or home
+//       window.location.href = '/login';
+//     } else {
+//       console.error('Logout failed:', response.data);
+//     }
+//   } catch (error) {
+//     console.error('Logout error:', error.response?.data || error.message);
+//   }
+// };
+
+
+const showDropdown = ref(false);
+
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value;
+};
 
 </script>
 

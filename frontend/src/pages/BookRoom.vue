@@ -10,7 +10,7 @@
           <input
             v-model="subject"
             type="text"
-            class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 " required>
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 " required>
         </div>
 
         <!-- Select Room -->
@@ -18,7 +18,7 @@
           <label class="block font-medium mb-1">Select Room :</label>
           <select
             v-model="selectedRoom"
-            class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 " required>
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 " required>
             <option disabled value="">Select Room</option>
             <option v-for="room in availableRooms" :key="room.name" :value="room.name">{{ room.name }}</option>
           </select>
@@ -34,14 +34,14 @@
             @keydown.down.prevent="highlightNext"
             @keydown.up.prevent="highlightPrev"
             @keydown.enter.prevent="selectCustomOrHighlighted"
-            class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 "
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 "
             placeholder="Type to search users..." 
           />
           <ul v-if="filteredUsers.length && showSuggestions" class="absolute bg-white shadow border w-full mt-1 rounded z-10 max-h-40 overflow-auto">
             <li
               v-for="(user, index) in filteredUsers"
               :key="user.email"
-              :class="['px-4 py-2 cursor-pointer', index === highlightedIndex ? 'bg-blue-200 text-black' : 'hover:bg-[#dfece9]']"
+              :class="['px-4 py-2 cursor-pointer', index === highlightedIndex ? 'bg-[#FAF9EE] text-black' : 'hover:bg-[#dfece9]']"
               @click="addAttendee(user.email)"
             >
               {{ user.name }} ({{ user.email }})
@@ -63,7 +63,7 @@
           <label class="block font-medium mb-1">Invitees Emails :</label>
           <textarea
             v-model="invitees_emails"
-            class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:ring-blue-900"/>
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900"/>
         </div>
 
         <!-- Date -->
@@ -72,7 +72,7 @@
           <input
             type="date"
             v-model="date"
-            class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:ring-blue-900 " required
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900 " required
           />
         </div>
 
@@ -83,7 +83,7 @@
             <input
               type="time"
               v-model="from_time"
-              class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:ring-blue-900 " required
+              class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900 " required
             />
           </div>
           <div>
@@ -91,7 +91,7 @@
             <input
               type="time"
               v-model="to_time"
-              class="w-full bg-blue-200 rounded px-2 py-1 border border-black focus:ring-blue-900 " required/>
+              class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900 " required/>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
         <textarea
           v-model="description"
           rows="11"
-          class="w-full h-full bg-blue-200 rounded px-2 py-1 border border-black resize-none focus:ring-blue-900" required/>
+          class="w-full h-full bg-[#FAF9EE] rounded px-2 py-1 border border-black resize-none focus:ring-blue-900" required/>
       </div>
     </div>
 
@@ -127,7 +127,8 @@ const route = useRoute();
 
 const emit = defineEmits(['bookingUpdated'])   //emits an event back to the parent when a booking is created/updated.
 const props = defineProps({                     // gets the editBooking prop to handle update mode.
-  editBooking: Object   
+  editBooking: Object, 
+  loggedInUser: String  
 })
 
 // These ref variables store form input values.
@@ -139,6 +140,7 @@ const date = ref('')
 const from_time = ref('')
 const to_time = ref('')
 const name = ref(null)
+const booked_by=ref('')
 
 // User search and suggestion are handled with:
 // filteredUsers (computed)
@@ -249,9 +251,7 @@ watch(() => props.editBooking, (newVal) => {
     // Set attendees emails
     //console.log('Attendees Emails:', newVal.attendees_emails)
     attendeesEmails.value = (newVal.attendees_emails || []).map(a => a.email_ids)
-    name.value = newVal.name
-
-    
+    name.value = newVal.name    
   }
 }, { immediate: true })
 
@@ -261,16 +261,16 @@ watch(() => props.editBooking, (newVal) => {
 
 
 const submitForm = async () => {
-console.log('Submitting form with:', {
-    subject: subject.value,
-    room: selectedRoom.value,
-    attendees_emails: attendeesEmails.value.map(email => ({ email_ids: email })),
-    invitees_emails: invitees_emails.value,
-    description: description.value,
-    date: date.value,
-    from_time: from_time.value,
-    to_time: to_time.value
-  })
+// console.log('Submitting form with:', {
+//     subject: subject.value,
+//     room: selectedRoom.value,
+//     attendees_emails: attendeesEmails.value.map(email => ({ email_ids: email })),
+//     invitees_emails: invitees_emails.value,
+//     description: description.value,
+//     date: date.value,
+//     from_time: from_time.value,
+//     to_time: to_time.value
+//   })
    if (!validateTimes()) {
     alert(timeError.value)
     return
@@ -284,7 +284,8 @@ console.log('Submitting form with:', {
   description: description.value,
   date: date.value,
   from_time: from_time.value,
-  to_time: to_time.value
+  to_time: to_time.value,
+  booked_by: props.loggedInUser
 }
 
 
@@ -355,6 +356,4 @@ const validateTimes = () => {
   timeError.value = ''
   return true
 }
-
-
 </script>

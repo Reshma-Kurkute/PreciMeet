@@ -20,9 +20,14 @@ const routes = [
     component: RoomDetail,
   },
   {
-    path: '/',
+    path: '/main',
     name: 'Home',
     component: () => import('@/pages/Home.vue'),
+  },
+  {
+    name:'room',
+    path: '/',
+    component:() => import('@/pages/Room.vue'),
   },
   {
     name: 'Login',
