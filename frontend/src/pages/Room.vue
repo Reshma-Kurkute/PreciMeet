@@ -1,11 +1,12 @@
 <template>
-  <div class="min-h-screen bg-[#b1ddf1] flex flex-col">
+  <div class="min-h-screen bg-white flex flex-col">
     <!-- Header -->
-    <header class="bg-gray-900 shadow-md px-6 py-4 flex justify-between items-center">
+   <header class="bg-white text-black shadow-2xl border-b border-gray-200 px-6 py-4 flex justify-between items-center rounded-b-xl transition-all duration-300">
+
       <div class="flex items-center gap-3 text-white">
         <router-link to="/" class="flex items-center gap-3">
-          <img src="http://pspl.com:8000/files/precimeet_logo.png" class="w-6 h-6 bg-black" alt="logo" />
-          <span class="text-xl font-bold text-green-300">PreciMeet</span>
+          <img src="http://pspl.com:8000/files/ChatGPT Image Aug 7, 2025, 05_17_50 PM.png" class="w-18 h-10 bg-black" alt="logo" />
+          <!-- <span class="text-xl font-bold text-green-300">PreciMeet</span> -->
         </router-link>
       </div>
 
@@ -19,7 +20,9 @@
           <!-- Dropdown -->
           <div v-if="showDropdown" class="absolute right-0 mt-2 w-48 bg-black shadow-lg rounded-md z-10">
             <button class="block w-full px-4 py-2 text-left text-gray-700 hover:text-white hover:bg-gray-700 hover:rounded" @click="handleLogout">
+                
               Logout
+             
             </button>
           </div>
         </div>
@@ -31,11 +34,11 @@
       <aside class="w-64 bg-white p-4 shadow-md">
         <nav class="space-y-2 text-gray-700">
           <router-link :to="{ name: 'home' }"
-            class="block w-full bg-black text-white py-2 rounded mt-4 text-center hover:bg-gray-800">
+            class="block w-full bg-white text-black py-2 rounded mt-4 text-center hover:bg-gray-300">
             Schedule Meeting
           </router-link>
 
-          <button class="block w-full bg-black text-white py-2 rounded mt-4 text-center hover:bg-gray-800"
+          <button class="block w-full bg-white text-black py-2 rounded mt-4 text-center hover:bg-gray-300"
             @click="showMyMeetings = !showMyMeetings">
             {{ showMyMeetings ? 'Meeting Rooms' : 'My Meeting' }}
           </button>
@@ -57,7 +60,8 @@
             <template v-if="myMeetings.length">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div v-for="meeting in myMeetings" :key="meeting.name"
-                  class="bg-[#f9f9f9] p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+  class="bg-white text-black p-6 rounded-2xl border border-gray-300 shadow-2xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transform hover:-translate-y-1 transition-all duration-300 ease-in-out">
+
                   <div class="flex justify-between items-start mb-2">
                     <h3 class="text-black text-xl font-extrabold truncate">
                       {{ meeting.subject }}
@@ -114,7 +118,8 @@
         <!-- Room List View -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="r in rooms" :key="r.room"
-            class="bg-white shadow-md border rounded-lg p-4 flex flex-col justify-between">
+  class="bg-white text-black shadow-2xl border border-gray-300 rounded-2xl p-5 flex flex-col justify-between transform hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 ease-in-out">
+
             <router-link :to="{ name: 'Home', params: { roomName: r.name } }">
               <img :src="getImageUrl(r.room_image)" alt="Room Image" class="w-full h-40 object-cover rounded mb-4" />
 
@@ -141,7 +146,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,nextTick } from 'vue'
 import { api, frappe } from '@/api'
 import UserAvatar from './UserAvatar.vue'
 import { useRouter } from 'vue-router'
@@ -188,31 +193,43 @@ const fetchUser = async () => {
 // Fetch meetings for current user
 const fetchMyMeetings = async () => {
   try {
+    // format today's date as YYYY-MM-DD in your local TZ (IST for you)
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+
     const res = await api.get('/Room Reservation', {
       params: {
-        filters: JSON.stringify([['owner', '=', loggedInUser.value]]),
+        filters: JSON.stringify([
+          ['owner', '=', loggedInUser.value],
+          ['date', '>=', todayStr], // ← only future (and today)
+        ]),
         fields: JSON.stringify([
-          'name',
-          'subject',
-          'date',
-          'from_time',
-          'to_time',
-          'room',
-          'booked_by',
-          'description',
-          'invitees_emails',
-          'attendees_emails',
-          'docstatus'
+          'name','subject','date','from_time','to_time','room',
+          'booked_by','description','invitees_emails','attendees_emails','docstatus'
         ]),
         order_by: 'date desc',
         limit_page_length: 50
       }
-    })
-    myMeetings.value = res.data.data
+    });
+
+    let rows = res.data.data || [];
+
+    // OPTIONAL: if you also want to hide meetings that already ended today
+    const now = new Date();
+    const nowHHMMSS = now.toTimeString().slice(0, 8); // "HH:MM:SS"
+    rows = rows.filter(m =>
+      m.date > todayStr || (m.date === todayStr && m.to_time >= nowHHMMSS)
+    );
+
+    myMeetings.value = rows;
   } catch (error) {
-    console.error('Failed to fetch meetings:', error)
+    console.error('Failed to fetch meetings:', error);
   }
-}
+};
+
 
 // Image fallback
 const getImageUrl = (path) => {
@@ -245,45 +262,17 @@ const cancelBooking = async (name) => {
   }
 }
 
-//------------------For logout-------------------------
 
-// function getCookie(name) {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return parts.pop().split(';').shift();
-//   return null;
-// }
 const handleLogout = async () => {
-  await session.logout.submit()
-}
-// const logoutUser = async () => {
-//   try {
-//     const csrfToken = getCookie('csrf_token');
-
-//     if (!csrfToken) {
-//       console.error('Missing CSRF token from cookies');
-//       return;
-//     }
-
-//     const response = await frappe.post('/logout', {
-//       method: 'POST',
-//       headers: {
-//          'Content-Type': 'application/json',
-//         'X-Frappe-CSRF-Token': csrfToken
-//       },
-//       credentials: 'include',
-//     });
-
-//     if (response.ok) {
-//       // Redirect to login page or home
-//       window.location.href = '/login';
-//     } else {
-//       console.error('Logout failed:', response.data);
-//     }
-//   } catch (error) {
-//     console.error('Logout error:', error.response?.data || error.message);
-//   }
-// };
+  try {
+    await session.logout.submit()
+  } catch (err) {
+    console.error('Logout failed:', err)
+  }finally{
+ session.isLoggedIn = false
+ await nextTick()
+ await router.replace({ name: 'Login' })
+}}
 
 
 const showDropdown = ref(false);

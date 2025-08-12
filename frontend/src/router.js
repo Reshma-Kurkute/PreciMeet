@@ -3,6 +3,16 @@ import { session } from './data/session'
 import { userResource } from '@/data/user'
 import RoomDetail from '@/pages/BookRoom.vue'
 
+// const routes = [
+//   { name:'RoomDetail', path: '/rooms/:roomName', component: RoomDetail },
+//   { name:'Room',       path: '/room',           component: () => import('@/pages/Room.vue') },
+//   { name:'Home',       path: '/main',           component: () => import('@/pages/Home.vue') },
+//   { name:'Root',       path: '/',               component: () => import('@/pages/Room.vue') },
+//   { name:'Login',      path: '/account/login',  component: () => import('@/pages/Login.vue') },
+//   { name:'BookRoom',   path: '/book-room/:roomName?', component: () => import('@/pages/Home.vue') },
+// ]
+
+
 const routes = [
   {
     name:'BookRoom',

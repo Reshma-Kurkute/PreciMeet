@@ -1,14 +1,17 @@
 <template>
-  <div id="app" class="bg-[#F1F0E4] min-h-screen text-black px-6 py-10">
+  <div id="app" class="bg-white min-h-screen text-black px-6 py-10">
     <!-- Header -->
     <!-- Fixed, black header -->
 <!-- Here contain the code of Header.vue -->
- <header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-gray-900 shadow-md">
+ <header
+  class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4
+         bg-white/80 backdrop-blur border-b border-black/10
+         shadow-[0_6px_18px_rgba(0,0,0,0.10)]">
   <!-- Logo and title -->
   <div class="flex items-center gap-3 text-white">
   <router-link to="/" class="flex items-center gap-3">
-    <img src="http://pspl.com:8000/files/precimeet_logo.png" class="w-6.5 h-6.5 bg-black" alt="logo" />
-    <span class="text-xl font-bold text-green-300">PreciMeet</span>
+    <img src="http://pspl.com:8000/files/ChatGPT Image Aug 7, 2025, 05_17_50 PM.png" class="w-18 h-10 bg-black" alt="logo" />
+    <!-- <span class="text-xl font-bold text-green-300">PreciMeet</span> -->
   </router-link>
 </div>
 
@@ -19,7 +22,11 @@
       My Bookings</router-link>
     </button> -->
     
-    <button class="px-4 py-1 border border-black bg-white text-black rounded hover:bg-blue-900 hover:text-black transition">
+    <button  class="bg-black text-white px-4 py-1 rounded shadow-lg
+         hover:bg-gray-300 hover:text-black
+         transition-transform duration-150
+         active:translate-y-0
+         active:shadow-md">
       <router-link to="/Room">
       Meeting Rooms
       </router-link>
@@ -33,8 +40,8 @@
 
           <!-- Dropdown -->
           <div v-if="showDropdown" class="absolute right-0 mt-2 w-48 bg-black shadow-lg rounded-md z-10">
-            <button class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100" @click="handleLogout">
-              Logout
+            <button class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100" @click="handleLogout">             
+              Logout             
             </button>
           </div>
         </div>
@@ -52,7 +59,7 @@
   <h2 class="text-2xl font-semibold">Upcoming Meetings</h2>
   <button
     @click="showOnlyMine = !showOnlyMine"
-    class="px-4 py-1 text-lg border border-black bg-black text-white rounded hover:bg-blue-900 transition"
+    class="px-4 py-1 text-lg border border-black bg-white text-black rounded hover:bg-gray-300 transition"
   >
     {{ showOnlyMine ? 'Show All' : 'My Meetings' }}
   </button>
@@ -63,8 +70,12 @@
           <div
             v-for="booking in upcomingMeetings"
             :key="booking.name"
-            class="bg-[#f9f9f9] p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
-          >
+            class="group rounded-xl bg-gradient-to-br from-white to-gray-50
+         p-4 shadow-[0_10px_25px_rgba(0,0,0,0.08)]
+         ring-1 ring-black/5
+         transition-transform duration-200 ease-out
+         hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(0,0,0,0.15)]
+         tilt-3d">
             <div class="flex justify-between items-start mb-2">
               <h3 class="text-black text-xl font-extrabold truncate">
                 {{ booking.subject }}
@@ -187,10 +198,6 @@ const parseBookingDateTime = (dateStr, timeStr) => {
   }
 }
 
-
-
-
-
 //Computed: Only future meetings
 const upcomingMeetings = computed(() => {
   const now = new Date()
@@ -218,17 +225,6 @@ const emit = defineEmits(['bookingUpdated'])  //Ensure BookRoom.vue emits the co
 
 const showOnlyMine = ref(false)
 const loggedInUser = ref('')
-
-// Fetch logged in user
-// const getUser = async () => {
-//   try {
-//     const res = await frappe.get('/frappe.auth.get_logged_user')
-//     loggedInUser.value = res.data.message
-//   } catch (err) {
-//     console.error('Failed to get logged in user:', err)
-//   }
-// }
-
 
 
 // for edit booking 
@@ -259,20 +255,6 @@ onMounted(() => {
 })
 //ofr edit form from BookRoom.vue
 const route = useRoute()
-
-// onMounted(() => {
-//   getUser()
-//   fetchBookings()
-
-//   // Check if there's an editBooking query in URL
-//   if (route.query.editBooking) {
-//     try {
-//       selectedBooking.value = JSON.parse(decodeURIComponent(route.query.editBooking))
-//     } catch (err) {
-//       console.error('Failed to decode editBooking query:', err)
-//     }
-//   }
-// })
 
 onMounted(async () => {
   await getUser()
@@ -311,47 +293,11 @@ const getUser = async () => {
     console.error('Failed to get logged in user:', err)
   }
 }
-//------------------For logout-------------------------
 
-// function getCookie(name) {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return parts.pop().split(';').shift();
-//   return null;
-// }
 const handleLogout = async () => {
   await session.logout.submit()
+   router.push({ name: 'Login' })
 }
-// const logoutUser = async () => {
-//   try {
-//     const csrfToken = getCookie('csrf_token');
-
-//     if (!csrfToken) {
-//       console.error('Missing CSRF token from cookies');
-//       return;
-//     }
-
-//     const response = await frappe.post('/logout', {
-//       method: 'POST',
-//       headers: {
-//          'Content-Type': 'application/json',
-//         'X-Frappe-CSRF-Token': csrfToken
-//       },
-//       credentials: 'include',
-//     });
-
-//     if (response.ok) {
-//       // Redirect to login page or home
-//       window.location.href = '/login';
-//     } else {
-//       console.error('Logout failed:', response.data);
-//     }
-//   } catch (error) {
-//     console.error('Logout error:', error.response?.data || error.message);
-//   }
-// };
-
-
 const showDropdown = ref(false);
 
 const toggleDropdown = () => {

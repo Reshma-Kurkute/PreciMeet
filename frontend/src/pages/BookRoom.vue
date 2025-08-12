@@ -10,7 +10,7 @@
           <input
             v-model="subject"
             type="text"
-            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 " required>
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-gray-900 " required>
         </div>
 
         <!-- Select Room -->
@@ -18,7 +18,7 @@
           <label class="block font-medium mb-1">Select Room :</label>
           <select
             v-model="selectedRoom"
-            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 " required>
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-gray-900 " required>
             <option disabled value="">Select Room</option>
             <option v-for="room in availableRooms" :key="room.name" :value="room.name">{{ room.name }}</option>
           </select>
@@ -34,7 +34,7 @@
             @keydown.down.prevent="highlightNext"
             @keydown.up.prevent="highlightPrev"
             @keydown.enter.prevent="selectCustomOrHighlighted"
-            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-none focus:ring-blue-900 "
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:outline-nonefocus:ring-gray-900 "
             placeholder="Type to search users..." 
           />
           <ul v-if="filteredUsers.length && showSuggestions" class="absolute bg-white shadow border w-full mt-1 rounded z-10 max-h-40 overflow-auto">
@@ -51,7 +51,7 @@
             <span
               v-for="(email, index) in attendeesEmails"
               :key="index"
-              class="bg-[#295a50] text-white px-2 py-1 rounded-full text-sm flex items-center gap-1">
+              class="bg-gray-300 text-black px-2 py-1 rounded-full text-sm flex items-center gap-1">
               {{ email }}
               <button type="button" @click="removeAttendee(index)" class="text-white hover:text-gray-300">&times;</button>
             </span>
@@ -63,7 +63,7 @@
           <label class="block font-medium mb-1">Invitees Emails :</label>
           <textarea
             v-model="invitees_emails"
-            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900"/>
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-gray-900"/>
         </div>
 
         <!-- Date -->
@@ -72,7 +72,7 @@
           <input
             type="date"
             v-model="date"
-            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900 " required
+            class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-gray-900 " required
           />
         </div>
 
@@ -83,7 +83,7 @@
             <input
               type="time"
               v-model="from_time"
-              class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900 " required
+              class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black ffocus:ring-gray-900 " required
             />
           </div>
           <div>
@@ -91,7 +91,7 @@
             <input
               type="time"
               v-model="to_time"
-              class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-blue-900 " required/>
+              class="w-full bg-[#FAF9EE] rounded px-2 py-1 border border-black focus:ring-gray-900 " required/>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
         <textarea
           v-model="description"
           rows="11"
-          class="w-full h-full bg-[#FAF9EE] rounded px-2 py-1 border border-black resize-none focus:ring-blue-900" required/>
+          class="w-full h-full bg-[#FAF9EE] rounded px-2 py-1 border border-black resize-none focus:ring-gray-900" required/>
       </div>
     </div>
 
@@ -110,7 +110,11 @@
     <div class="pt-4 align-middle">
       <button
         type="submit"
-        class="bg-black text-white px-6 py-2 rounded shadow hover:bg-blue-900 w-fit focus:ring-blue-900 focus:focus:bg-blue-900 align-middle">
+         class="bg-black text-white px-6 py-2 rounded shadow-lg
+         hover:bg-gray-300 hover:text-black
+         transition-transform duration-150
+         active:translate-y-0 active:shadow-md w-fit
+         focus:ring-2 focus:ring-black/50 focus:outline-none">
         {{ name ? 'Update Booking' : 'Book Now' }}
       </button>
     </div>
@@ -249,7 +253,7 @@ watch(() => props.editBooking, (newVal) => {
       invitees_emails.value = newVal.invitees_emails || ''
     }
     // Set attendees emails
-    //console.log('Attendees Emails:', newVal.attendees_emails)
+    console.log('Attendees Emails:', newVal.attendees_emails)
     attendeesEmails.value = (newVal.attendees_emails || []).map(a => a.email_ids)
     name.value = newVal.name    
   }

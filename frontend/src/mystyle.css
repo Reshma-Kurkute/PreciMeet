@@ -915,3 +915,42 @@ body {
     }
   }
 }
+.card-3d {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 400px;
+  margin: 50px auto;
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.05);
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-3d:hover {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 10px 25px rgba(0, 0, 0, 0.05);
+}
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.05) inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+/* input:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+  color: black;
+}  */
+.tilt-3d {
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+}
+.tilt-3d:hover {
+  transform: perspective(900px) rotateX(2.2deg) rotateY(-2.2deg) translateY(-2px);
+}
